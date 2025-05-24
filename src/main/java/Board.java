@@ -107,23 +107,21 @@ private void spawnNewPiece() {
     currentPiece.setPieceShape(nextPiece.getPieceShape());
     nextPiece.setPieceShape(Shape.PieceShape.getRandomShape());
 
-    curPieceX = BOARD_WIDTH_CELLS / 2; 
-
-
+    curPieceX = BOARD_WIDTH_CELLS / 2;
     curPieceY = -currentPiece.getTopmostRelativeY();
-
 
     // Update next shape preview panel
     parentFrame.getNextPanel().setNextShape(nextPiece);
 
     if (!tryMove(currentPiece, curPieceX, curPieceY)) {
         currentPiece.setPieceShape(Shape.PieceShape.NoShape);
-        timer.stop();
         isStarted = false;
-        isFallingFinished = true; 
+        isFallingFinished = true;
+        timer.stop();
+        repaint(); // <-- Ensure repaint is called so paintComponent draws game over
         // Optionally show game over in side panel or overlay
     } else {
-        isFallingFinished = false; 
+        isFallingFinished = false;
     }
     updateStatusBar();
 }
