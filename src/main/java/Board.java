@@ -35,6 +35,11 @@ public class Board extends JPanel implements ActionListener {
 
     private Tetris parentFrame;
 
+    private static final int INITIAL_TIMER_DELAY = 400;
+    private static final int MIN_TIMER_DELAY = 80;
+    private static final int SPEEDUP_LINES_STEP = 10;
+    private static final int SPEEDUP_AMOUNT = 40;
+
     public Board(Tetris parent) {
         this.parentFrame = parent;
         initBoard();
@@ -52,7 +57,7 @@ public class Board extends JPanel implements ActionListener {
         nextPiece = new Shape();
         nextPiece.setPieceShape(Shape.PieceShape.getRandomShape()); 
 
-        timer = new Timer(400, this); 
+        timer = new Timer(INITIAL_TIMER_DELAY, this); 
     }
 
     public void start() {
@@ -84,7 +89,8 @@ public class Board extends JPanel implements ActionListener {
 
     private void updateStatusBar() {
         // Remove: statusBar.setText(...)
-        parentFrame.updateScoreAndLines(score, numLinesRemoved);
+        int level = (numLinesRemoved / SPEEDUP_LINES_STEP) + 1;
+        parentFrame.updateScoreAndLines(score, numLinesRemoved, level);
         // Optionally, show instructions somewhere else
     }
 
@@ -207,8 +213,15 @@ private void spawnNewPiece() {
             else if (numFullLinesInThisTurn == 3) score += 500;
             else if (numFullLinesInThisTurn == 4) score += 800; 
 
+            updateTimerSpeed();
             updateStatusBar();
         }
+    }
+
+    private void updateTimerSpeed() {
+        int newDelay = INITIAL_TIMER_DELAY - ((numLinesRemoved / SPEEDUP_LINES_STEP) * SPEEDUP_AMOUNT);
+        if (newDelay < MIN_TIMER_DELAY) newDelay = MIN_TIMER_DELAY;
+        timer.setDelay(newDelay);
     }
 
     @Override

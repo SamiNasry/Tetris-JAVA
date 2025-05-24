@@ -6,6 +6,7 @@ public class Tetris extends JFrame {
     private Board board;
     private JLabel scoreLabel;
     private JLabel linesLabel;
+    private JLabel levelLabel; // Add this line
     private NextPanel nextPanel;
 
     public static final int BOARD_WIDTH_IN_CELLS = 10;
@@ -86,9 +87,16 @@ public class Tetris extends JFrame {
         linesLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         linesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        levelLabel = new JLabel("Level: 1"); // Add this line
+        levelLabel.setForeground(Color.WHITE);
+        levelLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+        levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         sidePanel.add(scoreLabel);
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(linesLabel);
+        sidePanel.add(Box.createVerticalStrut(10));
+        sidePanel.add(levelLabel); // Add this line
         sidePanel.add(Box.createVerticalStrut(40));
 
         nextPanel = new NextPanel();
@@ -145,9 +153,11 @@ public class Tetris extends JFrame {
         });
     }
 
-    public void updateScoreAndLines(int score, int lines) {
+    // Change this method to accept level
+    public void updateScoreAndLines(int score, int lines, int level) {
         scoreLabel.setText("Score: " + score);
         linesLabel.setText("Lines: " + lines);
+        levelLabel.setText("Level: " + level);
     }
 
     public NextPanel getNextPanel() {
