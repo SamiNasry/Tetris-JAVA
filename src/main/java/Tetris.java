@@ -27,90 +27,6 @@ public class Tetris extends JFrame {
         board.setMinimumSize(new Dimension(400, 800)); // Bigger: 10x20 cells, 40px per cell
         board.setPreferredSize(new Dimension(600, 1200)); // Bigger: 10x20 cells, 60px per cell
 
-        // --- Title/Name panel (between board and instructions) ---
-        JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridBagLayout()); // Use GridBagLayout for perfect centering
-        titlePanel.setBackground(new Color(139, 129, 129));
-        titlePanel.setOpaque(true);
-        titlePanel.setMinimumSize(new Dimension(240, 350));
-        titlePanel.setPreferredSize(new Dimension(300, 420));
-
-        // Content panel to hold all content vertically
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setOpaque(false);
-
-        // Logo background panel (white, only for logo)
-        JPanel logoBgPanel = new JPanel();
-        logoBgPanel.setBackground(Color.WHITE);
-        logoBgPanel.setOpaque(true);
-        logoBgPanel.setMaximumSize(new Dimension(150, 150));
-        logoBgPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel logoLabel = new JLabel();
-        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        try {
-            java.net.URL logoUrl = getClass().getResource("/logo-ensa-berrechid.png");
-            ImageIcon logoIcon;
-            if (logoUrl != null) {
-                logoIcon = new ImageIcon(logoUrl);
-            } else {
-                logoIcon = new ImageIcon("logo-ensa-berrechid.png");
-            }
-            Image img = logoIcon.getImage().getScaledInstance(130, 130, Image.SCALE_SMOOTH);
-            logoLabel.setIcon(new ImageIcon(img));
-        } catch (Exception e) {
-            // If logo not found, ignore
-        }
-        logoBgPanel.add(logoLabel);
-
-        contentPanel.add(Box.createVerticalStrut(24));
-        contentPanel.add(logoBgPanel);
-        contentPanel.add(Box.createVerticalStrut(24));
-
-        // "Tetris" title
-        JLabel tetrisLabel = new JLabel("Tetris");
-        tetrisLabel.setFont(new Font("Arial", Font.BOLD, 38));
-        tetrisLabel.setForeground(new Color(0, 200, 255));
-        tetrisLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(tetrisLabel);
-
-        contentPanel.add(Box.createVerticalStrut(18));
-
-        // "Project made by:" label
-        JLabel byLabel = new JLabel("Project made by:");
-        byLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        byLabel.setForeground(Color.ORANGE);
-        byLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(byLabel);
-
-        contentPanel.add(Box.createVerticalStrut(10));
-
-        // Names, spaced and styled
-        String[] names = {"Nasry Sami", "Moussaif Fahd", "Soukaina", "Zakaria Louaddi"};
-        for (String name : names) {
-            JLabel nameLabel = new JLabel(name);
-            nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-            nameLabel.setForeground(Color.DARK_GRAY);
-            nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            contentPanel.add(nameLabel);
-            contentPanel.add(Box.createVerticalStrut(5));
-        }
-
-        // Add glue to center vertically
-        contentPanel.add(Box.createVerticalGlue());
-
-        // Center contentPanel in titlePanel using GridBagLayout
-        GridBagConstraints gbcTitle = new GridBagConstraints();
-        gbcTitle.gridx = 0;
-        gbcTitle.gridy = 0;
-        gbcTitle.weightx = 1.0;
-        gbcTitle.weighty = 1.0;
-        gbcTitle.anchor = GridBagConstraints.CENTER;
-        gbcTitle.fill = GridBagConstraints.NONE;
-        titlePanel.add(contentPanel, gbcTitle);
-        // --- End Title/Name panel ---
-
         // Instructions panel (middle)
         JPanel instructionsPanel = new JPanel();
         instructionsPanel.setLayout(new BoxLayout(instructionsPanel, BoxLayout.Y_AXIS));
@@ -216,30 +132,23 @@ public class Tetris extends JFrame {
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        // Board: 40% of width
+        // Board: 50% of width (adjusted)
         gbc.gridx = 0;
-        gbc.weightx = 0.4;
+        gbc.weightx = 0.5;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainPanel.add(board, gbc);
 
-        // Title/Name panel: 20% of width
+        // Instructions panel: 25% of width (adjusted)
         gbc.gridx = 1;
-        gbc.weightx = 0.2;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        mainPanel.add(titlePanel, gbc);
-
-        // Instructions panel: 20% of width
-        gbc.gridx = 2;
-        gbc.weightx = 0.2;
+        gbc.weightx = 0.25;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainPanel.add(instructionsPanel, gbc);
 
-        // Side panel: 20% of width
-        gbc.gridx = 3;
-        gbc.weightx = 0.2;
+        // Side panel: 25% of width (adjusted)
+        gbc.gridx = 2;
+        gbc.weightx = 0.25;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainPanel.add(sidePanel, gbc);
