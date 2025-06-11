@@ -119,6 +119,7 @@ private void spawnNewPiece() {
         isFallingFinished = true;
         timer.stop();
         repaint(); // <-- Ensure repaint is called so paintComponent draws game over
+        parentFrame.updateHighScore(score); // Add this line
         // Optionally show game over in side panel or overlay
     } else {
         isFallingFinished = false;
@@ -326,17 +327,34 @@ private void spawnNewPiece() {
         String msg = "GAME OVER";
         FontMetrics fm = getFontMetrics(g.getFont());
         int msgWidth = fm.stringWidth(msg);
-        g.drawString(msg, (BOARD_WIDTH_CELLS * cellSize - msgWidth) / 2, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 - 20);
+        g.drawString(msg, (BOARD_WIDTH_CELLS * cellSize - msgWidth) / 2, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 - 40);
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("Helvetica", Font.PLAIN, 14));
         String scoreMsg = "Final Score: " + score;
         int scoreMsgWidth = fm.stringWidth(scoreMsg);
-        g.drawString(scoreMsg, (BOARD_WIDTH_CELLS * cellSize - scoreMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 10); 
+        g.drawString(scoreMsg, (BOARD_WIDTH_CELLS * cellSize - scoreMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 - 10);
 
+        // Show previous high score
+        int prevHigh = parentFrame.getPreviousHighScore();
+        String prevHighMsg = "Previous High Score: " + prevHigh;
+        int prevHighMsgWidth = fm.stringWidth(prevHighMsg);
+        g.drawString(prevHighMsg, (BOARD_WIDTH_CELLS * cellSize - prevHighMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 10);
+
+        // Show "New High Score!" if achieved
+        if (parentFrame.wasLastGameHighScore()) {
+            g.setColor(Color.YELLOW);
+            g.setFont(new Font("Helvetica", Font.BOLD, 18));
+            String newHighMsg = "New High Score!";
+            int newHighMsgWidth = fm.stringWidth(newHighMsg);
+            g.drawString(newHighMsg, (BOARD_WIDTH_CELLS * cellSize - newHighMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 35);
+        }
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Helvetica", Font.PLAIN, 14));
         String restartMsg = "Press 'S' to Restart";
         int restartMsgWidth = fm.stringWidth(restartMsg);
-        g.drawString(restartMsg, (BOARD_WIDTH_CELLS * cellSize - restartMsgWidth) / 2 + 15, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 40);
+        g.drawString(restartMsg, (BOARD_WIDTH_CELLS * cellSize - restartMsgWidth) / 2 + 15, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 60);
     }
 
 

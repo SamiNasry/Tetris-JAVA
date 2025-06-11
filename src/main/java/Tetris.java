@@ -7,12 +7,17 @@ public class Tetris extends JFrame {
     private JLabel scoreLabel;
     private JLabel linesLabel;
     private JLabel levelLabel; // Add this line
+    private JLabel highScoreLabel; // Add this line
     private NextPanel nextPanel;
+    private HighScoreManager highScoreManager; // Add this line
+    private boolean lastGameWasHighScore = false; // Add this line
+    private JButton resetHighScoreButton; // Add this line
 
     public static final int BOARD_WIDTH_IN_CELLS = 10;
     public static final int BOARD_HEIGHT_IN_CELLS_VISIBLE = 20;
 
     public Tetris() {
+        highScoreManager = new HighScoreManager(); // Add this line
         initUI();
     }
 
@@ -124,6 +129,25 @@ public class Tetris extends JFrame {
         ));
         sidePanel.add(nextPanel);
 
+        // Move highScoreLabel below nextPanel
+        highScoreLabel = new JLabel("High Score: " + highScoreManager.getHighScore());
+        highScoreLabel.setForeground(Color.YELLOW);
+        highScoreLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        highScoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(Box.createVerticalStrut(20));
+        sidePanel.add(highScoreLabel);
+
+        // Add reset button below highScoreLabel
+        resetHighScoreButton = new JButton("Reset High Score");
+        resetHighScoreButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        resetHighScoreButton.setFocusable(false);
+        resetHighScoreButton.addActionListener(e -> {
+            highScoreManager.resetHighScore();
+            highScoreLabel.setText("High Score: 0");
+        });
+        sidePanel.add(Box.createVerticalStrut(10));
+        sidePanel.add(resetHighScoreButton);
+
         sidePanel.add(Box.createVerticalGlue());
 
         // Layout constraints for board, instructions, and side panel
@@ -176,6 +200,29 @@ public class Tetris extends JFrame {
         scoreLabel.setText("Score: " + score);
         linesLabel.setText("Lines: " + lines);
         levelLabel.setText("Level: " + level);
+    }
+
+    // Add this method to update high score label and set lastGameWasHighScore
+    public void updateHighScore(int score) {
+        int currentHigh = highScoreManager.getHighScore();
+        if (score > currentHigh) {
+            highScoreManager.saveScore(score);
+            highScoreLabel.setText("High Score: " + score);
+            lastGameWasHighScore = true;
+        } else {
+            highScoreLabel.setText("High Score: " + currentHigh);
+            lastGameWasHighScore = false;
+        }
+    }
+
+    // Add this method to get the previous high score
+    public int getPreviousHighScore() {
+        return highScoreManager.getHighScore();
+    }
+
+    // Add this method to check if last game was a high score
+    public boolean wasLastGameHighScore() {
+        return lastGameWasHighScore;
     }
 
     public NextPanel getNextPanel() {
