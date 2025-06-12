@@ -1,3 +1,11 @@
+/* 
+ * Moussaif Fahd
+ * Nasry Sami
+ * Louaddi Zakaria  
+ * AIT LAADIK Soukaina
+ */
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,43 +16,45 @@ import java.util.Random;
 
 public class Board extends JPanel implements ActionListener {
 
+    // Largeur et hauteur du plateau en cases visibles
     private static final int BOARD_WIDTH_CELLS = 10;
     private static final int BOARD_HEIGHT_CELLS_VISIBLE = 20;
+    // Nombre de lignes cachées en haut pour la génération des pièces
     private static final int HIDDEN_ROWS_ABOVE = 2; 
     private static final int TOTAL_BOARD_HEIGHT_CELLS = BOARD_HEIGHT_CELLS_VISIBLE + HIDDEN_ROWS_ABOVE;
 
     private int cellSize;
 
     private Timer timer;
-    private boolean isFallingFinished = false;
-    private boolean isStarted = false;
-    private boolean isPaused = false;
+    private boolean isFallingFinished = false; // Vrai si la pièce ne peut plus descendre
+    private boolean isStarted = false;         // Vrai si la partie est en cours
+    private boolean isPaused = false;          // Vrai si la partie est en pause
 
-    private int numLinesRemoved = 0;
-    private int score = 0;
+    private int numLinesRemoved = 0; // Nombre total de lignes supprimées
+    private int score = 0;           // Score du joueur
 
+    private int curPieceX = 0; // Position X de la pièce courante
+    private int curPieceY = 0; // Position Y de la pièce courante
 
-    private int curPieceX = 0;
-    private int curPieceY = 0;
+    private Shape currentPiece; // Pièce en train de tomber
+    private Shape nextPiece;    // Prochaine pièce à afficher
 
-    private Shape currentPiece;
-    private Shape nextPiece;
+    private Color[][] grid;     // Grille du plateau, chaque case contient la couleur de la pièce posée ou null
 
+    private Tetris parentFrame; // Référence à la fenêtre principale pour mettre à jour l'UI
 
-    private Color[][] grid;
-
-    private Tetris parentFrame;
-
-    private static final int INITIAL_TIMER_DELAY = 400;
-    private static final int MIN_TIMER_DELAY = 80;
-    private static final int SPEEDUP_LINES_STEP = 10;
-    private static final int SPEEDUP_AMOUNT = 40;
+    // Paramètres pour la vitesse du jeu
+    private static final int INITIAL_TIMER_DELAY = 400; // Délai initial en ms
+    private static final int MIN_TIMER_DELAY = 80;      // Délai minimum (vitesse max)
+    private static final int SPEEDUP_LINES_STEP = 10;   // Nombre de lignes à effacer pour accélérer
+    private static final int SPEEDUP_AMOUNT = 40;       // Réduction du délai à chaque palier
 
     public Board(Tetris parent) {
         this.parentFrame = parent;
         initBoard();
     }
 
+    // Initialisation du plateau et des variables de jeu
     private void initBoard() {
         setFocusable(true);
         addKeyListener(new TAdapter());
@@ -60,6 +70,7 @@ public class Board extends JPanel implements ActionListener {
         timer = new Timer(INITIAL_TIMER_DELAY, this); 
     }
 
+    // Démarre une nouvelle partie
     public void start() {
         if (isPaused) return;
 
@@ -73,13 +84,13 @@ public class Board extends JPanel implements ActionListener {
         updateStatusBar();
     }
 
+    // Met le jeu en pause ou le reprend
     private void pause() {
         if (!isStarted || isFallingFinished) return; 
 
         isPaused = !isPaused;
         if (isPaused) {
             timer.stop();
-            // Optionally show pause in side panel or overlay
         } else {
             timer.start();
             updateStatusBar(); 
@@ -87,13 +98,13 @@ public class Board extends JPanel implements ActionListener {
         repaint(); 
     }
 
+    // Met à jour l'affichage du score, des lignes et du niveau dans la fenêtre principale
     private void updateStatusBar() {
-        // Remove: statusBar.setText(...)
         int level = (numLinesRemoved / SPEEDUP_LINES_STEP) + 1;
         parentFrame.updateScoreAndLines(score, numLinesRemoved, level);
-        // Optionally, show instructions somewhere else
     }
 
+    // Vide la grille du plateau (toutes les cases à null)
     private void clearBoardGrid() {
         for (int i = 0; i < BOARD_WIDTH_CELLS; i++) {
             for (int j = 0; j < TOTAL_BOARD_HEIGHT_CELLS; j++) {
@@ -102,42 +113,43 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    // Fait apparaître une nouvelle pièce en haut du plateau
+    private void spawnNewPiece() {
+        currentPiece.setPieceShape(nextPiece.getPieceShape());
+        nextPiece.setPieceShape(Shape.PieceShape.getRandomShape());
 
-private void spawnNewPiece() {
-    currentPiece.setPieceShape(nextPiece.getPieceShape());
-    nextPiece.setPieceShape(Shape.PieceShape.getRandomShape());
+        curPieceX = BOARD_WIDTH_CELLS / 2;
+        curPieceY = -currentPiece.getTopmostRelativeY();
 
-    curPieceX = BOARD_WIDTH_CELLS / 2;
-    curPieceY = -currentPiece.getTopmostRelativeY();
+        // Affiche la prochaine pièce dans le panneau latéral
+        parentFrame.getNextPanel().setNextShape(nextPiece);
 
-    // Update next shape preview panel
-    parentFrame.getNextPanel().setNextShape(nextPiece);
-
-    if (!tryMove(currentPiece, curPieceX, curPieceY)) {
-        currentPiece.setPieceShape(Shape.PieceShape.NoShape);
-        isStarted = false;
-        isFallingFinished = true;
-        timer.stop();
-        repaint(); // <-- Ensure repaint is called so paintComponent draws game over
-        parentFrame.updateHighScore(score); // Add this line
-        // Optionally show game over in side panel or overlay
-    } else {
-        isFallingFinished = false;
+        // Si la nouvelle pièce ne peut pas être placée, la partie est terminée
+        if (!tryMove(currentPiece, curPieceX, curPieceY)) {
+            currentPiece.setPieceShape(Shape.PieceShape.NoShape);
+            isStarted = false;
+            isFallingFinished = true;
+            timer.stop();
+            repaint(); // Redessine pour afficher "Game Over"
+            parentFrame.updateHighScore(score);
+        } else {
+            isFallingFinished = false;
+        }
+        updateStatusBar();
     }
-    updateStatusBar();
-}
 
-
-
+    // Tente de déplacer la pièce à la position (newX, newY)
     private boolean tryMove(Shape pieceToTry, int newX, int newY) {
         for (int i = 0; i < 4; i++) {
             int boardX = newX + pieceToTry.getX(i);
             int boardY = newY + pieceToTry.getY(i);
 
+            // Vérifie les limites du plateau
             if (boardX < 0 || boardX >= BOARD_WIDTH_CELLS || boardY < 0 || boardY >= TOTAL_BOARD_HEIGHT_CELLS) {
                 return false;
             }
-            if (grid[boardX][boardY] != null) { // null means empty
+            // Vérifie si la case est déjà occupée
+            if (grid[boardX][boardY] != null) {
                 return false;
             }
         }
@@ -149,6 +161,7 @@ private void spawnNewPiece() {
         return true;
     }
 
+    // Pose la pièce courante sur la grille et vérifie les lignes complètes
     private void pieceLanded() {
         for (int i = 0; i < 4; i++) {
             int boardX = curPieceX + currentPiece.getX(i);
@@ -165,12 +178,14 @@ private void spawnNewPiece() {
         }
     }
 
+    // Fait descendre la pièce d'une ligne si possible, sinon la pose
     private void oneLineDown() {
         if (!tryMove(currentPiece, curPieceX, curPieceY + 1)) {
             pieceLanded();
         }
     }
 
+    // Fait tomber la pièce jusqu'en bas instantanément
     private void dropDownHard() {
         int newY = curPieceY;
         while (tryMove(currentPiece, curPieceX, newY + 1)) {
@@ -179,7 +194,7 @@ private void spawnNewPiece() {
         pieceLanded();
     }
 
-
+    // Supprime toutes les lignes complètes et met à jour le score
     private void removeFullLines() {
         int numFullLinesInThisTurn = 0;
         for (int y = TOTAL_BOARD_HEIGHT_CELLS - 1; y >= 0; y--) { 
@@ -193,20 +208,23 @@ private void spawnNewPiece() {
 
             if (lineIsFull) {
                 numFullLinesInThisTurn++;
+                // Décale toutes les lignes au-dessus vers le bas
                 for (int currentY = y; currentY > 0; currentY--) {
                     for (int x = 0; x < BOARD_WIDTH_CELLS; x++) {
                         grid[x][currentY] = grid[x][currentY - 1];
                     }
                 }
+                // Vide la première ligne
                 for (int x = 0; x < BOARD_WIDTH_CELLS; x++) {
                     grid[x][0] = null;
                 }
-                y++;
+                y++; // Revérifie la même ligne après le décalage
             }
         }
 
         if (numFullLinesInThisTurn > 0) {
             numLinesRemoved += numFullLinesInThisTurn;
+            // Attribution des points selon le nombre de lignes supprimées d'un coup
             if (numFullLinesInThisTurn == 1) score += 100;
             else if (numFullLinesInThisTurn == 2) score += 300;
             else if (numFullLinesInThisTurn == 3) score += 500;
@@ -217,6 +235,7 @@ private void spawnNewPiece() {
         }
     }
 
+    // Ajuste la vitesse du jeu en fonction du nombre de lignes supprimées
     private void updateTimerSpeed() {
         int newDelay = INITIAL_TIMER_DELAY - ((numLinesRemoved / SPEEDUP_LINES_STEP) * SPEEDUP_AMOUNT);
         if (newDelay < MIN_TIMER_DELAY) newDelay = MIN_TIMER_DELAY;
@@ -226,7 +245,7 @@ private void spawnNewPiece() {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        updateCellSize(); // Call without arguments
+        updateCellSize(); // Calcule la taille des cases selon la taille du panneau
         drawGameArea(g); 
         drawLandedPieces(g);
         drawCurrentFallingPiece(g);
@@ -234,17 +253,16 @@ private void spawnNewPiece() {
         if (isPaused) {
             drawPauseScreen(g);
         }
-        // Show Game Over overlay if game is finished and not started
+        // Affiche l'écran de fin si la partie est terminée
         if (isFallingFinished && !isStarted) {
             drawGameOverScreen(g);
         }
     }
 
-    // Remove any old updateCellSize(Graphics g) method and use this:
+    // Calcule la taille des cases pour que le plateau s'adapte à la fenêtre
     public void updateCellSize() {
         Dimension size = getSize();
         if (size.width > 0 && size.height > 0) {
-            // Fill as much as possible, keep cells square
             cellSize = Math.min(
                 size.width / BOARD_WIDTH_CELLS,
                 size.height / BOARD_HEIGHT_CELLS_VISIBLE
@@ -252,6 +270,7 @@ private void spawnNewPiece() {
         }
     }
 
+    // Dessine la grille du plateau
     private void drawGameArea(Graphics g) {
         Dimension size = getSize();
         int boardPixelWidth = BOARD_WIDTH_CELLS * cellSize;
@@ -269,7 +288,7 @@ private void spawnNewPiece() {
         }
     }
 
-
+    // Dessine toutes les pièces déjà posées sur le plateau
     private void drawLandedPieces(Graphics g) {
         for (int x = 0; x < BOARD_WIDTH_CELLS; x++) {
             for (int yGrid = HIDDEN_ROWS_ABOVE; yGrid < TOTAL_BOARD_HEIGHT_CELLS; yGrid++) {
@@ -281,6 +300,7 @@ private void spawnNewPiece() {
         }
     }
 
+    // Dessine la pièce en train de tomber
     private void drawCurrentFallingPiece(Graphics g) {
         if (currentPiece.getPieceShape() != Shape.PieceShape.NoShape) {
             for (int i = 0; i < 4; i++) {
@@ -295,6 +315,7 @@ private void spawnNewPiece() {
         }
     }
 
+    // Dessine un carré d'une pièce à la position donnée
     private void drawSquare(Graphics g, int screenX, int screenY, Color color) {
         g.setColor(color);
         g.fillRect(screenX + 1, screenY + 1, cellSize - 2, cellSize - 2);
@@ -308,6 +329,7 @@ private void spawnNewPiece() {
         g.drawLine(screenX + cellSize - 1, screenY + cellSize - 1, screenX + cellSize - 1, screenY + 1); 
     }
 
+    // Affiche l'écran de pause
     private void drawPauseScreen(Graphics g) {
         g.setColor(new Color(50, 50, 50, 180)); 
         g.fillRect(0, 0, BOARD_WIDTH_CELLS * cellSize, BOARD_HEIGHT_CELLS_VISIBLE * cellSize);
@@ -319,6 +341,7 @@ private void spawnNewPiece() {
         g.drawString(msg, (BOARD_WIDTH_CELLS * cellSize - msgWidth) / 2, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2);
     }
 
+    // Affiche l'écran de fin de partie avec le score et le meilleur score
     private void drawGameOverScreen(Graphics g) {
         g.setColor(new Color(50, 50, 50, 200)); 
         g.fillRect(0, 0, BOARD_WIDTH_CELLS * cellSize, BOARD_HEIGHT_CELLS_VISIBLE * cellSize);
@@ -335,13 +358,13 @@ private void spawnNewPiece() {
         int scoreMsgWidth = fm.stringWidth(scoreMsg);
         g.drawString(scoreMsg, (BOARD_WIDTH_CELLS * cellSize - scoreMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 - 10);
 
-        // Show previous high score
+        // Affiche le meilleur score précédent
         int prevHigh = parentFrame.getPreviousHighScore();
         String prevHighMsg = "Meilleur score précédent : " + prevHigh;
         int prevHighMsgWidth = fm.stringWidth(prevHighMsg);
         g.drawString(prevHighMsg, (BOARD_WIDTH_CELLS * cellSize - prevHighMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 10);
 
-        // Show "New High Score!" if achieved
+        // Affiche "Nouveau meilleur score !" si le joueur a battu le record
         if (parentFrame.wasLastGameHighScore()) {
             g.setColor(Color.YELLOW);
             g.setFont(new Font("Helvetica", Font.BOLD, 18));
@@ -357,7 +380,6 @@ private void spawnNewPiece() {
         g.drawString(restartMsg, (BOARD_WIDTH_CELLS * cellSize - restartMsgWidth) / 2 + 15, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 60);
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) { 
         if (isFallingFinished) { 
@@ -369,6 +391,7 @@ private void spawnNewPiece() {
         repaint(); 
     }
 
+    // Gestionnaire des touches du clavier pour contrôler le jeu
     class TAdapter extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -385,7 +408,6 @@ private void spawnNewPiece() {
                 }
                 return;
             }
-
 
             if (isPaused && e.getKeyCode() != KeyEvent.VK_P) { 
                 return;

@@ -1,3 +1,10 @@
+/* 
+ * Moussaif Fahd
+ * Nasry Sami
+ * Louaddi Zakaria  
+ * AIT LAADIK Soukaina
+ */
+
 import java.sql.*;
 
 public class HighScoreManager {

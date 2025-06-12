@@ -1,38 +1,56 @@
+/* 
+ * Moussaif Fahd
+ * Nasry Sami
+ * Louaddi Zakaria  
+ * AIT LAADIK Soukaina
+ */
+
+// Classe principale de la fenêtre du jeu Tetris et de l'interface graphique
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Tetris extends JFrame {
 
+    // Plateau de jeu principal
     private Board board;
+    // Labels pour l'affichage du score, des lignes, du niveau et du meilleur score
     private JLabel scoreLabel;
     private JLabel linesLabel;
-    private JLabel levelLabel; // Add this line
-    private JLabel highScoreLabel; // Add this line
+    private JLabel levelLabel;
+    private JLabel highScoreLabel;
+    // Panneau pour afficher la prochaine pièce
     private NextPanel nextPanel;
-    private HighScoreManager highScoreManager; // Add this line
-    private boolean lastGameWasHighScore = false; // Add this line
-    private JButton resetHighScoreButton; // Add this line
+    // Gestionnaire du meilleur score (base de données)
+    private HighScoreManager highScoreManager;
+    // Indique si le dernier score était un nouveau record
+    private boolean lastGameWasHighScore = false;
+    // Bouton pour réinitialiser le meilleur score
+    private JButton resetHighScoreButton;
 
+    // Constantes pour la taille du plateau
     public static final int BOARD_WIDTH_IN_CELLS = 10;
     public static final int BOARD_HEIGHT_IN_CELLS_VISIBLE = 20;
 
+    // Constructeur : initialise la fenêtre et l'UI
     public Tetris() {
-        highScoreManager = new HighScoreManager(); // Add this line
+        highScoreManager = new HighScoreManager();
         initUI();
     }
 
+    // Initialise l'interface graphique et tous les panneaux
     private void initUI() {
-        // Use a panel with GridBagLayout to tightly pack board, instructions, and side panel
+        // Panneau principal avec disposition en grille
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(Color.DARK_GRAY);
 
-        // Board panel
+        // Création et configuration du plateau de jeu
         board = new Board(this);
         board.setBackground(Color.BLACK);
-        board.setMinimumSize(new Dimension(400, 800)); // Bigger: 10x20 cells, 40px per cell
-        board.setPreferredSize(new Dimension(600, 1200)); // Bigger: 10x20 cells, 60px per cell
+        board.setMinimumSize(new Dimension(400, 800));
+        board.setPreferredSize(new Dimension(600, 1200));
 
-        // Instructions panel (middle)
+        // Panneau central pour les instructions
         JPanel instructionsPanel = new JPanel();
         instructionsPanel.setLayout(new BoxLayout(instructionsPanel, BoxLayout.Y_AXIS));
         instructionsPanel.setBackground(new Color(25, 25, 25));
@@ -70,13 +88,10 @@ public class Tetris extends JFrame {
         instructions.setLineWrap(true);
         instructions.setWrapStyleWord(true);
         instructions.setAlignmentY(Component.CENTER_ALIGNMENT);
-
-        // Center the text in the JTextArea
         instructions.setHighlighter(null);
         instructions.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         instructions.setBorder(null);
 
-        // Use a panel to center the JTextArea horizontally
         JPanel instructionsTextPanel = new JPanel();
         instructionsTextPanel.setLayout(new BoxLayout(instructionsTextPanel, BoxLayout.X_AXIS));
         instructionsTextPanel.setOpaque(false);
@@ -89,7 +104,7 @@ public class Tetris extends JFrame {
         instructionsPanel.add(instructionsTextPanel);
         instructionsPanel.add(Box.createVerticalGlue());
 
-        // Side panel for next shape and score (right)
+        // Panneau latéral pour le score, le niveau, la prochaine pièce, etc.
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
         sidePanel.setBackground(new Color(30, 30, 30));
@@ -97,6 +112,7 @@ public class Tetris extends JFrame {
         sidePanel.setMinimumSize(new Dimension(180, 200));
         sidePanel.setPreferredSize(new Dimension(200, 400));
 
+        // Labels pour le score, les lignes et le niveau
         scoreLabel = new JLabel("Score : 0");
         scoreLabel.setForeground(Color.WHITE);
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 22));
@@ -116,9 +132,10 @@ public class Tetris extends JFrame {
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(linesLabel);
         sidePanel.add(Box.createVerticalStrut(10));
-        sidePanel.add(levelLabel); // Add this line
+        sidePanel.add(levelLabel);
         sidePanel.add(Box.createVerticalStrut(40));
 
+        // Panneau pour afficher la prochaine pièce
         nextPanel = new NextPanel();
         nextPanel.setPreferredSize(new Dimension(140, 140));
         nextPanel.setMinimumSize(new Dimension(100, 100));
@@ -129,7 +146,7 @@ public class Tetris extends JFrame {
         ));
         sidePanel.add(nextPanel);
 
-        // Move highScoreLabel below nextPanel
+        // Affichage du meilleur score
         highScoreLabel = new JLabel("Meilleur score : " + highScoreManager.getHighScore());
         highScoreLabel.setForeground(Color.YELLOW);
         highScoreLabel.setFont(new Font("Arial", Font.BOLD, 18));
@@ -137,7 +154,7 @@ public class Tetris extends JFrame {
         sidePanel.add(Box.createVerticalStrut(20));
         sidePanel.add(highScoreLabel);
 
-        // Add reset button below highScoreLabel
+        // Bouton pour réinitialiser le meilleur score
         resetHighScoreButton = new JButton("Réinitialiser le meilleur score");
         resetHighScoreButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         resetHighScoreButton.setFocusable(false);
@@ -150,10 +167,10 @@ public class Tetris extends JFrame {
 
         sidePanel.add(Box.createVerticalGlue());
 
-        // Add logo above project label with white background and bigger width
+        // Panneau pour afficher le logo avec fond blanc
         JPanel logoPanel = new JPanel();
         logoPanel.setBackground(Color.WHITE);
-        logoPanel.setMaximumSize(new Dimension(200, 140)); // Wider and fixed height
+        logoPanel.setMaximumSize(new Dimension(200, 140));
         logoPanel.setPreferredSize(new Dimension(200, 140));
         logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         logoPanel.setOpaque(true);
@@ -164,7 +181,7 @@ public class Tetris extends JFrame {
             java.net.URL logoUrl = getClass().getClassLoader().getResource("logo-ensa-berrechid.png");
             if (logoUrl != null) {
                 ImageIcon logoIcon = new ImageIcon(logoUrl);
-                Image img = logoIcon.getImage().getScaledInstance(180, 120, Image.SCALE_SMOOTH); // Wider
+                Image img = logoIcon.getImage().getScaledInstance(180, 120, Image.SCALE_SMOOTH);
                 logoLabel.setIcon(new ImageIcon(img));
             } else {
                 logoLabel.setText("Logo non trouvé");
@@ -177,34 +194,31 @@ public class Tetris extends JFrame {
         logoPanel.add(logoLabel);
         sidePanel.add(logoPanel);
 
-        // Add project label at the bottom (bigger and more visible)
+        // Label du projet en bas du panneau latéral
         JLabel projectLabel = new JLabel("PROJET POUR MODULE JAVA - ENSAB");
-        projectLabel.setForeground(new Color(255, 140, 0)); // Bright orange for visibility
-        projectLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Larger and bold
+        projectLabel.setForeground(new Color(255, 140, 0));
+        projectLabel.setFont(new Font("Arial", Font.BOLD, 20));
         projectLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         sidePanel.add(projectLabel);
 
-        // Layout constraints for board, instructions, and side panel
+        // Placement des panneaux dans la fenêtre principale
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        // Board: 50% of width (adjusted)
         gbc.gridx = 0;
         gbc.weightx = 0.5;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainPanel.add(board, gbc);
 
-        // Instructions panel: 25% of width (adjusted)
         gbc.gridx = 1;
         gbc.weightx = 0.25;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainPanel.add(instructionsPanel, gbc);
 
-        // Side panel: 25% of width (adjusted)
         gbc.gridx = 2;
         gbc.weightx = 0.25;
         gbc.weighty = 1.0;
@@ -215,7 +229,7 @@ public class Tetris extends JFrame {
 
         setTitle("Tetris Simple");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Start maximized
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setMinimumSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
         setResizable(true);
@@ -229,14 +243,14 @@ public class Tetris extends JFrame {
         });
     }
 
-    // Change this method to accept level
+    // Met à jour l'affichage du score, des lignes et du niveau
     public void updateScoreAndLines(int score, int lines, int level) {
         scoreLabel.setText("Score : " + score);
         linesLabel.setText("Lignes : " + lines);
         levelLabel.setText("Niveau : " + level);
     }
 
-    // Add this method to update high score label and set lastGameWasHighScore
+    // Met à jour le meilleur score et indique si un nouveau record a été atteint
     public void updateHighScore(int score) {
         int currentHigh = highScoreManager.getHighScore();
         if (score > currentHigh) {
@@ -249,24 +263,27 @@ public class Tetris extends JFrame {
         }
     }
 
-    // Add this method to get the previous high score
+    // Retourne le meilleur score précédent
     public int getPreviousHighScore() {
         return highScoreManager.getHighScore();
     }
 
-    // Add this method to check if last game was a high score
+    // Indique si la dernière partie était un nouveau record
     public boolean wasLastGameHighScore() {
         return lastGameWasHighScore;
     }
 
+    // Retourne le panneau de la prochaine pièce
     public NextPanel getNextPanel() {
         return nextPanel;
     }
 
+    // (Non utilisé, mais requis par Board)
     public int getCellSize() {
         return 0;
     }
 
+    // Point d'entrée du programme
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             Tetris game = new Tetris();
@@ -274,6 +291,7 @@ public class Tetris extends JFrame {
         });
     }
 
+    // Panneau pour afficher la prochaine pièce à jouer
     public static class NextPanel extends JPanel {
         private Shape nextShape;
 
@@ -310,6 +328,7 @@ public class Tetris extends JFrame {
             }
         }
 
+        // Dessine un carré d'une pièce dans le panneau "Prochaine"
         private void drawSquare(Graphics g, int x, int y, int size, Color color) {
             g.setColor(color);
             g.fillRect(x + 1, y + 1, size - 2, size - 2);
