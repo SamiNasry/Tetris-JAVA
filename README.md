@@ -68,8 +68,8 @@ Le projet met en avant la maîtrise de la programmation orientée objet en Java,
 ## Remerciements
 
 Projet réalisé pour le module Java à l'**ENSAB**  
-**Enseignant : Monsieur Lahcen Moumoune**
+**Enseignant : Monsieur Lahcen MOUMOUN**
 
 ---
 
-© 2024 ENSAB - Tous droits réservés.
+
