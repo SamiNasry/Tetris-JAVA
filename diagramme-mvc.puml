@@ -1,0 +1,38 @@
+@startuml
+title Architecture MVC - Tetris ENSAB
+
+package "Vue (View)" {
+  class "Tetris (Fenêtre principale)" as Tetris
+  class "Board (Plateau de jeu)"
+  class "NextPanel (Prochaine pièce)"
+}
+
+package "Contrôleur (Controller)" {
+  class "Gestion des événements clavier"
+  class "Gestion du timer"
+}
+
+package "Modèle (Model)" {
+  class "Shape (Pièce)"
+  class "HighScoreManager"
+  class "Grille de jeu"
+}
+
+Joueur -right-> Tetris : Interagit avec l'interface
+
+Tetris --> "Gestion des événements clavier" : Délègue les entrées clavier
+Tetris --> Board : Affiche le plateau
+Tetris --> NextPanel : Affiche la prochaine pièce
+
+"Gestion des événements clavier" --> Board : Commande les mouvements/rotations
+"Gestion du timer" --> Board : Déclenche la descente automatique
+
+Board --> "Grille de jeu" : Met à jour l'état du plateau
+Board --> Shape : Manipule les pièces
+
+Board --> Tetris : Informe la vue (score, lignes, niveau)
+Tetris --> HighScoreManager : Lit/écrit le meilleur score
+
+HighScoreManager --> "Base SQLite" : Persiste les scores
+
+@enduml

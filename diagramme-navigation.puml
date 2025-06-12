@@ -1,0 +1,46 @@
+@startuml
+title Diagramme de navigation - Tetris ENSAB
+
+actor Joueur
+
+rectangle "Fenêtre principale (Tetris)" as Tetris {
+  [Panneau Instructions]
+  [Panneau Plateau de jeu]
+  [Panneau Latéral]
+}
+
+rectangle "Panneau Plateau de jeu" as Board {
+  [Zone de jeu]
+  [Affichage des pièces]
+}
+
+rectangle "Panneau Latéral" as SidePanel {
+  [Score]
+  [Lignes]
+  [Niveau]
+  [Meilleur score]
+  [Bouton Réinitialiser]
+  [Prochaine pièce]
+  [Logo ENSAB]
+  [Mention projet]
+}
+
+Joueur --> Tetris : Lance l'application
+Joueur --> [Panneau Instructions] : Consulte les règles
+Joueur --> [Panneau Plateau de jeu] : Joue (clavier)
+Joueur --> [Panneau Latéral] : Consulte les scores, niveau, etc.
+Joueur --> [Bouton Réinitialiser] : Réinitialise le meilleur score
+
+[Panneau Plateau de jeu] --> [Zone de jeu] : Affichage dynamique
+[Panneau Plateau de jeu] --> [Affichage des pièces] : Pièce courante
+
+[Panneau Latéral] --> [Score]
+[Panneau Latéral] --> [Lignes]
+[Panneau Latéral] --> [Niveau]
+[Panneau Latéral] --> [Meilleur score]
+[Panneau Latéral] --> [Bouton Réinitialiser]
+[Panneau Latéral] --> [Prochaine pièce]
+[Panneau Latéral] --> [Logo ENSAB]
+[Panneau Latéral] --> [Mention projet]
+
+@enduml

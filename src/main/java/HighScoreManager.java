@@ -5,15 +5,20 @@
  * AIT LAADIK Soukaina
  */
 
+// Classe utilitaire pour gérer le meilleur score dans une base de données SQLite
+
 import java.sql.*;
 
 public class HighScoreManager {
+    // Chemin de la base de données SQLite (fichier local)
     private static final String DB_URL = "jdbc:sqlite:tetris_highscores.db";
 
+    // Constructeur : crée la table si elle n'existe pas
     public HighScoreManager() {
         createTableIfNotExists();
     }
 
+    // Crée la table "highscores" si elle n'existe pas déjà
     private void createTableIfNotExists() {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
@@ -27,6 +32,7 @@ public class HighScoreManager {
         }
     }
 
+    // Récupère le meilleur score enregistré dans la base
     public int getHighScore() {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
@@ -40,6 +46,7 @@ public class HighScoreManager {
         return 0;
     }
 
+    // Enregistre un nouveau score dans la base (utilisé si le joueur bat le record)
     public void saveScore(int score) {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement("INSERT INTO highscores(score) VALUES (?)")) {
@@ -50,6 +57,7 @@ public class HighScoreManager {
         }
     }
 
+    // Réinitialise le meilleur score (supprime tous les scores enregistrés)
     public void resetHighScore() {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {

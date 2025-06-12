@@ -1,0 +1,49 @@
+@startuml
+title Diagramme de scénarios - Tetris ENSAB
+
+actor Joueur
+
+participant "Tetris (Fenêtre principale)" as Tetris
+participant "Board (Plateau de jeu)" as Board
+participant "HighScoreManager" as HighScoreManager
+participant "Base SQLite" as SQLite
+
+== Lancement du jeu ==
+Joueur -> Tetris : Lance l'application
+Tetris -> HighScoreManager : Récupère le meilleur score
+HighScoreManager -> SQLite : SELECT MAX(score)
+SQLite --> HighScoreManager : Meilleur score
+HighScoreManager --> Tetris : Meilleur score
+
+== Démarrage d'une partie ==
+Joueur -> Board : Appuie sur 'S' pour démarrer
+Board -> Board : Initialise la grille, score, lignes, niveau
+Board -> Board : Fait apparaître une nouvelle pièce
+
+== Contrôles pendant la partie ==
+Joueur -> Board : Déplacement/rotation de la pièce (clavier)
+Board -> Board : Met à jour la position/rotation
+Board -> Board : Vérifie collisions et lignes complètes
+
+== Suppression de ligne(s) ==
+Board -> Board : Supprime les lignes pleines
+Board -> Board : Met à jour le score et le niveau
+Board -> Tetris : Met à jour l'affichage score/lignes/niveau
+
+== Fin de partie ==
+Board -> Board : Impossible de placer une nouvelle pièce
+Board -> Tetris : Affiche "Fin de partie"
+Board -> Tetris : Donne le score final
+Tetris -> HighScoreManager : Vérifie si nouveau meilleur score
+HighScoreManager -> SQLite : SELECT MAX(score)
+HighScoreManager -> SQLite : INSERT INTO highscores(score)
+HighScoreManager --> Tetris : Nouveau meilleur score (si applicable)
+Tetris -> Joueur : Affiche le score final et le meilleur score
+
+== Réinitialisation du meilleur score ==
+Joueur -> Tetris : Clique sur "Réinitialiser le meilleur score"
+Tetris -> HighScoreManager : resetHighScore()
+HighScoreManager -> SQLite : DELETE FROM highscores
+HighScoreManager --> Tetris : Confirmation
+
+@enduml
