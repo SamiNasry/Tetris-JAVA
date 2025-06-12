@@ -41,24 +41,24 @@ public class Tetris extends JFrame {
         instructionsPanel.setPreferredSize(new Dimension(300, 400));
         instructionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel title = new JLabel("How to Play");
+        JLabel title = new JLabel("Comment jouer");
         title.setForeground(Color.ORANGE);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextArea instructions = new JTextArea(
             """
-            Press 'S' to Start or Restart
+            Appuyez sur 'S' pour démarrer ou recommencer
 
-            Controls:
-            - Left/Right Arrow or A/D: Move
-            - Down Arrow or S: Soft Drop
-            - Up Arrow or W: Rotate Right
-            - Z: Rotate Left
-            - Space: Hard Drop
-            - P: Pause/Resume
+            Contrôles :
+            - Flèche gauche/droite ou A/D : Déplacer
+            - Flèche bas ou S : Descente rapide
+            - Flèche haut ou W : Rotation droite
+            - Z : Rotation gauche
+            - Espace : Chute instantanée
+            - P : Pause/Reprendre
 
-            Clear lines for points!
+            Faites des lignes pour marquer des points !
             """
         );
         instructions.setEditable(false);
@@ -97,17 +97,17 @@ public class Tetris extends JFrame {
         sidePanel.setMinimumSize(new Dimension(180, 200));
         sidePanel.setPreferredSize(new Dimension(200, 400));
 
-        scoreLabel = new JLabel("Score: 0");
+        scoreLabel = new JLabel("Score : 0");
         scoreLabel.setForeground(Color.WHITE);
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 22));
         scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        linesLabel = new JLabel("Lines: 0");
+        linesLabel = new JLabel("Lignes : 0");
         linesLabel.setForeground(Color.WHITE);
         linesLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         linesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        levelLabel = new JLabel("Level: 1"); // Add this line
+        levelLabel = new JLabel("Niveau : 1");
         levelLabel.setForeground(Color.WHITE);
         levelLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -125,12 +125,12 @@ public class Tetris extends JFrame {
         nextPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         nextPanel.setBackground(new Color(40, 40, 40));
         nextPanel.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(Color.GRAY, 1), "Next", 0, 0, new Font("Arial", Font.BOLD, 14), Color.LIGHT_GRAY
+            BorderFactory.createLineBorder(Color.GRAY, 1), "Prochaine", 0, 0, new Font("Arial", Font.BOLD, 14), Color.LIGHT_GRAY
         ));
         sidePanel.add(nextPanel);
 
         // Move highScoreLabel below nextPanel
-        highScoreLabel = new JLabel("High Score: " + highScoreManager.getHighScore());
+        highScoreLabel = new JLabel("Meilleur score : " + highScoreManager.getHighScore());
         highScoreLabel.setForeground(Color.YELLOW);
         highScoreLabel.setFont(new Font("Arial", Font.BOLD, 18));
         highScoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -138,17 +138,24 @@ public class Tetris extends JFrame {
         sidePanel.add(highScoreLabel);
 
         // Add reset button below highScoreLabel
-        resetHighScoreButton = new JButton("Reset High Score");
+        resetHighScoreButton = new JButton("Réinitialiser le meilleur score");
         resetHighScoreButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         resetHighScoreButton.setFocusable(false);
         resetHighScoreButton.addActionListener(e -> {
             highScoreManager.resetHighScore();
-            highScoreLabel.setText("High Score: 0");
+            highScoreLabel.setText("Meilleur score : 0");
         });
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(resetHighScoreButton);
 
         sidePanel.add(Box.createVerticalGlue());
+
+        // Add project label at the bottom (bigger and more visible)
+        JLabel projectLabel = new JLabel("PROJET POUR MODULE JAVA - ENSAB");
+        projectLabel.setForeground(new Color(255, 140, 0)); // Bright orange for visibility
+        projectLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Larger and bold
+        projectLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(projectLabel);
 
         // Layout constraints for board, instructions, and side panel
         GridBagConstraints gbc = new GridBagConstraints();
@@ -179,7 +186,7 @@ public class Tetris extends JFrame {
 
         setContentPane(mainPanel);
 
-        setTitle("Simple Tetris");
+        setTitle("Tetris Simple");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Start maximized
         setMinimumSize(new Dimension(800, 600));
@@ -197,9 +204,9 @@ public class Tetris extends JFrame {
 
     // Change this method to accept level
     public void updateScoreAndLines(int score, int lines, int level) {
-        scoreLabel.setText("Score: " + score);
-        linesLabel.setText("Lines: " + lines);
-        levelLabel.setText("Level: " + level);
+        scoreLabel.setText("Score : " + score);
+        linesLabel.setText("Lignes : " + lines);
+        levelLabel.setText("Niveau : " + level);
     }
 
     // Add this method to update high score label and set lastGameWasHighScore
@@ -207,10 +214,10 @@ public class Tetris extends JFrame {
         int currentHigh = highScoreManager.getHighScore();
         if (score > currentHigh) {
             highScoreManager.saveScore(score);
-            highScoreLabel.setText("High Score: " + score);
+            highScoreLabel.setText("Meilleur score : " + score);
             lastGameWasHighScore = true;
         } else {
-            highScoreLabel.setText("High Score: " + currentHigh);
+            highScoreLabel.setText("Meilleur score : " + currentHigh);
             lastGameWasHighScore = false;
         }
     }

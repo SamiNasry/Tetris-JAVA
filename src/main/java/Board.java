@@ -313,7 +313,7 @@ private void spawnNewPiece() {
         g.fillRect(0, 0, BOARD_WIDTH_CELLS * cellSize, BOARD_HEIGHT_CELLS_VISIBLE * cellSize);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Helvetica", Font.BOLD, 20));
-        String msg = "PAUSED";
+        String msg = "PAUSE";
         FontMetrics fm = getFontMetrics(g.getFont());
         int msgWidth = fm.stringWidth(msg);
         g.drawString(msg, (BOARD_WIDTH_CELLS * cellSize - msgWidth) / 2, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2);
@@ -324,20 +324,20 @@ private void spawnNewPiece() {
         g.fillRect(0, 0, BOARD_WIDTH_CELLS * cellSize, BOARD_HEIGHT_CELLS_VISIBLE * cellSize);
         g.setColor(Color.RED);
         g.setFont(new Font("Helvetica", Font.BOLD, 24));
-        String msg = "GAME OVER";
+        String msg = "FIN DE PARTIE";
         FontMetrics fm = getFontMetrics(g.getFont());
         int msgWidth = fm.stringWidth(msg);
         g.drawString(msg, (BOARD_WIDTH_CELLS * cellSize - msgWidth) / 2, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 - 40);
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("Helvetica", Font.PLAIN, 14));
-        String scoreMsg = "Final Score: " + score;
+        String scoreMsg = "Score final : " + score;
         int scoreMsgWidth = fm.stringWidth(scoreMsg);
         g.drawString(scoreMsg, (BOARD_WIDTH_CELLS * cellSize - scoreMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 - 10);
 
         // Show previous high score
         int prevHigh = parentFrame.getPreviousHighScore();
-        String prevHighMsg = "Previous High Score: " + prevHigh;
+        String prevHighMsg = "Meilleur score précédent : " + prevHigh;
         int prevHighMsgWidth = fm.stringWidth(prevHighMsg);
         g.drawString(prevHighMsg, (BOARD_WIDTH_CELLS * cellSize - prevHighMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 10);
 
@@ -345,14 +345,14 @@ private void spawnNewPiece() {
         if (parentFrame.wasLastGameHighScore()) {
             g.setColor(Color.YELLOW);
             g.setFont(new Font("Helvetica", Font.BOLD, 18));
-            String newHighMsg = "New High Score!";
+            String newHighMsg = "Nouveau meilleur score !";
             int newHighMsgWidth = fm.stringWidth(newHighMsg);
             g.drawString(newHighMsg, (BOARD_WIDTH_CELLS * cellSize - newHighMsgWidth) / 2 + 20, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 35);
         }
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("Helvetica", Font.PLAIN, 14));
-        String restartMsg = "Press 'S' to Restart";
+        String restartMsg = "Appuyez sur 'S' pour recommencer";
         int restartMsgWidth = fm.stringWidth(restartMsg);
         g.drawString(restartMsg, (BOARD_WIDTH_CELLS * cellSize - restartMsgWidth) / 2 + 15, (BOARD_HEIGHT_CELLS_VISIBLE * cellSize) / 2 + 60);
     }
