@@ -150,6 +150,33 @@ public class Tetris extends JFrame {
 
         sidePanel.add(Box.createVerticalGlue());
 
+        // Add logo above project label with white background and bigger width
+        JPanel logoPanel = new JPanel();
+        logoPanel.setBackground(Color.WHITE);
+        logoPanel.setMaximumSize(new Dimension(200, 140)); // Wider and fixed height
+        logoPanel.setPreferredSize(new Dimension(200, 140));
+        logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        logoPanel.setOpaque(true);
+
+        JLabel logoLabel = new JLabel();
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        try {
+            java.net.URL logoUrl = getClass().getClassLoader().getResource("logo-ensa-berrechid.png");
+            if (logoUrl != null) {
+                ImageIcon logoIcon = new ImageIcon(logoUrl);
+                Image img = logoIcon.getImage().getScaledInstance(180, 120, Image.SCALE_SMOOTH); // Wider
+                logoLabel.setIcon(new ImageIcon(img));
+            } else {
+                logoLabel.setText("Logo non trouvé");
+                logoLabel.setForeground(Color.RED);
+            }
+        } catch (Exception ex) {
+            logoLabel.setText("Erreur chargement logo");
+            logoLabel.setForeground(Color.RED);
+        }
+        logoPanel.add(logoLabel);
+        sidePanel.add(logoPanel);
+
         // Add project label at the bottom (bigger and more visible)
         JLabel projectLabel = new JLabel("PROJET POUR MODULE JAVA - ENSAB");
         projectLabel.setForeground(new Color(255, 140, 0)); // Bright orange for visibility
